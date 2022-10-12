@@ -1,6 +1,6 @@
 ---
 title: "Mini Data-Analysis Deliverable 1"
-output: html_document
+output: github_document
 ---
 
 # Welcome to your (maybe) first-ever data analysis project!
@@ -80,10 +80,10 @@ And that is exactly the first thing that you will do!
 
 <!-------------------------- Start your work below ---------------------------->
 
-1: cancer_sample
-2: vancouver_trees
-3: apt_buildings
-4: parking_meters
+1: cancer_sample \
+2: vancouver_trees \
+3: apt_buildings \
+4: flow_sample \
 
 <!----------------------------------------------------------------------------->
 
@@ -94,21 +94,39 @@ And that is exactly the first thing that you will do!
 <!-------------------------- Start your work below ---------------------------->
 
 ```{r}
+glimpse(cancer_sample)
+class(cancer_sample)
+```
+The cancer_sample dataset has 569 rows and 32 columns. Most of the variables are numeric (dbl) except for diagnosis which is of the character type. The dataset is of the tbl_df class meaning the structure of this data is a tibble.
 
+```{r}
+glimpse(vancouver_trees)
+class(vancouver_trees)
+```
+The vancouver_trees dataset has 146,611 rows and 20 columns. There's a variety of variable types including numeric (dbl), character and date. This dataset is also a tibble.
+```{r}
+glimpse(apt_buildings)
+class(apt_buildings)
 ```
 
+The apt_buidlings dataset has 3,455 rows and 37 columns. Most the variables are of the character type and the rest are numeric (dbl). This data structure is a tibble.
+```{r}
+glimpse(flow_sample)
+class(flow_sample)
+```
+The flow_sample dataset has 218 rows and 7 columns. It consists of double and character variable types. It's a tibble.
 <!----------------------------------------------------------------------------->
 
 1.3 Now that you've explored the 4 datasets that you were initially most interested in, let's narrow it down to 2. What lead you to choose these 2? Briefly explain your choices below, and feel free to include any code in your explanation.
 
 <!-------------------------- Start your work below ---------------------------->
-
+My top two choices of datasets are now flow_sample and cancer_sample. I chose cancer_sample because it has a lot of numeric variables and it would be interesting to explore how these measurements differ for benign and malignant tumors. Also, I have a background in biology so the possible research questions that this dataset could explore are very interesting to me. I chose flow_sample because it only has 7 columns so I think it would be interesting and feasible to explore each variable individually. It also has both numeric and character variables so we could explore the different types.
 <!----------------------------------------------------------------------------->
 
 1.4 Time for the final decision! Going back to the beginning, it's important to have an *end goal* in mind. For example, if I had chosen the `titanic` dataset for my project, I might've wanted to explore the relationship between survival and other variables. Try to think of 1 research question that you would want to answer with each dataset. Note them down below, and make your final choice based on what seems more interesting to you!
 
 <!-------------------------- Start your work below ---------------------------->
-
+For the cancer_sample dataset, I would like to explore the relationship between the measurable dimensions of the nuclei and the diagnosis of a tumor. This could help us see how well we can predict the diagnosis based on the measurements. For the flow_sample dataset, I would like to explore whether certain  months have more extreme flow rates than others. My final choice is to analyze the cancer_sample dataset.
 <!----------------------------------------------------------------------------->
 
 # Important note
@@ -135,6 +153,65 @@ If we rewind and go back to the learning objectives, you'll see that by the end 
 2.2 For each of the 4 exercises that you complete, provide a *brief explanation* of why you chose that exercise in relation to your data (in other words, why does it make sense to do that?), and sufficient comments for a reader to understand your reasoning and code.
 
 <!-------------------------- Start your work below ---------------------------->
+All of the following plots are created using ggplot2 specifying the dataset, aesthetic maps and geometric objects. As well as some other input that will be used to label axes and make the graphs more presentable. 
+
+## Exercise 1 
+
+We will start by plotting the distributions of two numeric variables. I plotted a histogram for the radius_worst and the symmetry_worst variables to explore the distributions of these two continuous variables. As you can see in the code, we inputted the cancer_sample dataset and specified the variables to be radius_worst and symmetry_worst for the two different plots. Now that the plots are initialized we can add a layer to add the histogram geom. These plots show us the distribution of the two continuous variables so that we can see if the distribution of radius_worst and symmetry_worst is skewed or symmetric, where the peaks are and if there's any outliers. I did it for these worst variable specifically to see how the largest values differ.
+
+```{r}
+ggplot(cancer_sample, aes(radius_worst)) +
+  geom_histogram(bins = 50)+ 
+  labs(x="Radius", y = "Count", title="Distribution of the Largest Radius of Nuclei") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+```{r}
+ggplot(cancer_sample, aes(symmetry_worst)) +
+  geom_histogram(bins = 50) + 
+  labs(x="Symmetry", y="Count", title="Distribution of the Largest Symmetry of Nuclei")+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+## Exercise 6
+
+Now we will analyze the dataset by making two boxplots. Here we specified our x variable to be diagnosis which is categorical taking on values "B" for benign and "M" for malignant. We specified the y variable to be radius_mean. We then added a layer for the boxplot geom. The side-by-side boxplots are useful to look at the distribution of radius_mean for the two different diagnoses. We can compare the ranges and medians of the radius_mean variable for benign tumors and malignant tumors. The second boxplot is similar but the y variable is the smoothness_mean. Again the side-by-side boxplots work well to compare the two distributions and spot outliers.
+
+```{r}
+ggplot(cancer_sample, aes(diagnosis, radius_mean)) +
+  geom_boxplot() +
+  labs(x="Diagnosis",y="Mean radius",title="Distribution of Mean Radius of Nuclei for each Diagnosis ")+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r}
+ggplot(cancer_sample, aes(diagnosis, smoothness_mean)) +
+  geom_boxplot() +
+  labs(x="Diagnosis",y="Mean smoothness",title="Distribution of Mean Smoothness of Nuclei for each Diagnosis ")+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+## Exercise 8
+
+Next, we will use a density graph to explore our dataset further. The graph is created by specifying the area_mean variable to be our x variable. Then we add a layer to add the density geom. We used the density graph on the numerical variable area_mean to show the distribution of this continuous variable. This is useful to see where the maximum is and the symmetry of the data.
+
+```{r}
+ ggplot(cancer_sample, aes(area_mean)) +
+  geom_density() +
+  labs(x="Mean area",y="Density",title="Distribution of Mean Area of Nuclei")  +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+## Exercise 4
+
+Finally, we will use a scatterplot to explore the relationship between two variables. To do this we had to specify the x and y variables to be area_mean and area_se respectively, then we added the point geom and specified the transparency using alpha. This is a useful graph when we look at the relationship between area_mean and area_se because we can see how increasing the mean area affects the standard error of this measurement.
+
+```{r}
+ggplot(cancer_sample, aes(area_mean, area_se)) +
+  geom_point(alpha = 0.1) +
+  labs(x="Mean area",y="Standard error of area",title="Relationship between Mean Area of Nuclei and Standard Error of Nuclei")  +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
 
 <!----------------------------------------------------------------------------->
 
@@ -143,6 +220,10 @@ If we rewind and go back to the learning objectives, you'll see that by the end 
 So far, you have chosen a dataset and gotten familiar with it through exploring the data. Now it's time to figure out 4 research questions that you would like to answer with your data! Write the 4 questions and any additional comments at the end of this deliverable. These questions are not necessarily set in stone - TAs will review them and give you feedback; therefore, you may choose to pursue them as they are for the rest of the project, or make modifications!
 
 <!--- *****START HERE***** --->
+1. What is the relationship between the mean perimeter of the nuclei and the diagnosis? \
+2. What's the relationship between the worst or largest measurements of each variable and the diagnosis? \
+3. Does the magnitude of the standard error of a variable affect how well that variable predicts the diagnosis? \
+4. What is the relationship between the mean area of nuclei and the mean smoothness?\
 
 # Task 4: Process and summarize your data (13 points)
 
@@ -171,6 +252,121 @@ Ensure that the output of each operation is printed!
 Make sure it's clear what research question you are doing each operation for!
 
 <!------------------------- Start your work below ----------------------------->
+We will start by looking into our **first research question** and exploring the relationship between the perimeter of the nuclei present in the sample image and the diagnosis (benign or malignant). First we will find the mean, range, variance and median of the perimeter_mean variable across the two diagnoses. We will then create a plot that allows us to see the different distributions of perimeter_mean for the two different diagnoses. 
+
+**Task 1.** 
+```{r}
+cancer_sample %>%
+  group_by(diagnosis) %>%
+  summarize(mean(perimeter_mean), var(perimeter_mean), min(perimeter_mean),max(perimeter_mean),median(perimeter_mean))
+```
+
+By completing task 1, we are able to see which of these summary statistics differ for the two different diagnoses. This is a helpful first step when exploring the relationship between diagnosis and mean perimeter because if these summary statistics differ significantly for the two types of tumors we can continue to explore how perimeter_mean affects diagnosis.
+
+**Task 7.**
+```{r}
+ggplot(cancer_sample,aes(perimeter_mean,diagnosis)) +
+  ggridges::geom_density_ridges(alpha=0.5)  +
+  labs(x="Mean perimeter",y="Diagnosis",title = "Distribution of Mean Perimeter of Nuclei for each Diagnosis") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+This plot allows us to see how the distribution of the mean perimeter of nuclei present in the sample image differs for the two different types of breast mass. In the plot, I customized the transparency so that the distribution of the benign diagnosis doesn't cover the malignant distribution completely. By customizing the transparency, I was able to make it so that we can view both distributions fully in one plot. 
+
+
+To answer our **second research question** regarding the relationship between the worst variables and the diagnosis, we will start by looking specifically at the symmetry variable. First we will find the mean, variance, range and median of the mean symmetry variable across the two diagnoses. We will then plot a histogram and find the optimal number of bins.
+
+**Task 1.**
+```{r}
+cancer_sample %>%
+  group_by(diagnosis) %>%
+  summarize(mean(symmetry_worst), var(symmetry_worst), min(symmetry_worst),max(symmetry_worst), median(symmetry_worst))
+```
+
+Finding these summary statistics helps us begin to explore how the worst symmetry variable differs for the two different types of diagnosis. This is just looking at the symmetry variable but could be done for all worst variables to obtain a better idea of which measurements differ between the two diagnoses.
+
+**Task 8.**
+```{r}
+ggplot(cancer_sample, aes(symmetry_worst, colour = diagnosis)) +
+  geom_histogram(bins=10) +
+  labs(x="Worst symmetry", y="Count", title="Distribution of the Worst Symmetry") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggplot(cancer_sample, aes(symmetry_worst, colour = diagnosis)) +
+  geom_histogram(bins=60) +
+  labs(x="Worst symmetry", y="Count", title="Distribution of the Worst Symmetry") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggplot(cancer_sample, aes(symmetry_worst, colour = diagnosis)) +
+  geom_histogram(bins=110) +
+  labs(x="Worst symmetry", y="Count", title="Distribution of the Worst Symmetry") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+This plot show how the distribution of the largest/worst symmetry of nuclei for the two different diagnoses. Looking at the distribution of the largest symmetry of nuclei for the two different diagnoses can show us if the worst symmetry differs for benign and malignant masses. However, to analyze the histogram we want to make sure we have the correct number of bins. Too many bins leads to a very jagged graph but too few doesn't portray the data properly. As seen in the code above, we tried the graph with 10, 60 and 110 bins and the histogram with 60 bins looks the best.
+
+
+For our **third research question**, to look at whether the magnitude of the standard error of a variable affects how well that variable predicts the diagnosis, we will start by counting our observations for each type of diagnosis. We will then create a graph out of summarized variables that has at least two geom layers.
+
+**Task 2.**
+```{r}
+cancer_sample %>% 
+ group_by(diagnosis) %>% 
+ summarise( n = n())
+```
+
+By computing the number of observations that we have for malignant and benign diagnoses, we are able to make more accurate conclusions. For example, if one type of diagnosis had significantly more observations than the other, or if one didn't have a sufficient amount of observations some of our conclusions may not be accurate. To answer this research question, in our future analysis, we need to know which variables  can be used to accurately predict diagnosis. For example, this could be done using something like a test and training set of our data and  fitting a model meaning we need to ensure that we have enough of each type of observation in order to make our test and training sets.
+
+**Task 5.**
+```{r}
+cancer_sample2 <- cancer_sample %>%
+    group_by(diagnosis) %>%
+    summarise(across(where(is.numeric), mean, na.rm = TRUE))
+cancer_sample2
+
+cancer_sample3 <- cancer_sample2 %>% 
+  select(c(-ID, -radius_worst, -texture_worst, -perimeter_worst, -area_worst, -smoothness_worst, -compactness_worst,-concavity_worst, -concave_points_worst,-symmetry_worst,-fractal_dimension_worst, -concave_points_mean, -fractal_dimension_mean,-concave_points_se, -fractal_dimension_se, -area_mean, -area_se, -radius_mean, -radius_se, -perimeter_mean, -perimeter_se,-texture_mean,-texture_se)) %>%
+  pivot_longer(cols = c(-diagnosis), 
+               names_to  = c("Type",".value"),
+               names_sep = "_")
+cancer_sample3
+
+
+ggplot(cancer_sample3, aes(mean,se,colour = Type)) +
+  geom_point(aes(shape=diagnosis)) +
+  geom_line(alpha=0.5) +
+  labs(x="Mean", y="Standard error", title="Relationship between Mean and Standard Area of Measurements")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+This plot shows the four variables with the smallest mean and standard error. It also shows how they differ for the two diagnoses. The different shaped points help distinguish the two diagnoses and the lines are added so that it's easy to see the relationship between the two diagnoses. This can help us answer our question as we can see which have the largest standard error and means, and if this differs for benign and malignant.
+
+
+To answer the **fourth research question** and explore the relationship between the mean area of nuclei and the mean smoothness, we will create a categorical variable from the smoothness_mean variable. We will then create a plot and use a logarithmic axis since area_mean takes on a large range of values.
+
+**Task 3.**
+```{r}
+cancer_sample_1 <- cancer_sample %>% 
+  mutate(smoothness_mean_cat = case_when(smoothness_mean <= 0.06 ~ "Very smooth", 
+                              smoothness_mean > 0.06 & smoothness_mean <=0.09 ~ "Smooth",
+                              smoothness_mean > 0.09 & smoothness_mean <=0.12 ~ "Somewhat Smooth", 
+                              smoothness_mean > 0.12 ~ "Not smooth"))
+```
+
+Creating this categorical variable allows us to split the mean smoothness of nuclei present in a sample image into four categories. This is helpful because we can use this new variable in different graphs to explore the relationship with mean area as desired.
+
+**Task 6.**
+```{r}
+ggplot(cancer_sample_1, aes(smoothness_mean_cat,area_mean)) +
+  geom_jitter() +
+  scale_y_log10() +
+  labs(x="Mean smoothness", y="Mean area", title="Relationship between Mean Smoothness and Mean Area") +
+  theme(plot.title = element_text(hjust = 0.5))
+  
+```
+
+This plot helps us understand the relationship between smoothness and mean area. The categorical variable helps us see if a pattern exists and to see in which category most of our observations lie. The logarithmic scale helps us see all the observations since they have a large range.
 
 <!----------------------------------------------------------------------------->
 
@@ -179,7 +375,15 @@ Make sure it's clear what research question you are doing each operation for!
 Based on the operations that you've completed, how much closer are you to answering your research questions? Think about what aspects of your research questions remain unclear. Can your research questions be refined, now that you've investigated your data a bit more? Which research questions are yielding interesting results?
 
 <!-------------------------- Start your work below ---------------------------->
+Now that we have explored the data a bit more through various summarizing and graphing methods, we can make some conclusions regarding our four research questions. \
 
+  Through the various summary statistics about the mean perimeter and density graph showing the different distributions for each diagnosis, we are getting closer to answering our first research question. It's still very unclear whether our results are statistically significant, however so far it's interesting that each summary statistic is higher for the malignant diagnosis than it is for the benign. Also we can see in the graph that the distribution of the mean perimeter variable differ for the two different diagnoses. Benign has a much higher peak with a lower mean compared to the malignant distribution that are more spread out and almost bimodal. As mentioned, it still remains unclear if this the mean perimeter can predict the diagnosis, but so far it looks like the mean perimeter is generally smaller for benign tumors and there's less variance than for malignant. \
+  
+  For our second research question, we focused on the symmetry variable but to answer our question we would need to look further into all variables and their respective worst. The summary statistics showed that there are some differences between the worst symmetry for benign and malignant diagnoses. Then when we look at the histogram with 60 bins it's clear that the distribution of the symmetry worst variable is more spread out for the malignant tumor whereas the benign tumors have a clearer peak. A lot more analysis needs to be done for this question so that all measurements can be taken into account. The symmetry worst variable doesn't differ greatly between benign and malignant tumors so there's overlap in the histogram, and if this is the case with other worst variables then we could refine the question. \
+  
+  Our third research question looks at the magnitude of the standard error for each variable. Checking the number of observations for benign and malignant is important so that we can check we have an accurate sample size. In the graph we show both malignant and benign tumors so we needed to check that the number of observations for each is similar so that we can compare the two. The graph looks at just four variables and their standard error, so in a further analysis we need to check the other variables. The variables in the graph are the four variables with the smallest mean and standard error so that we can see them all on the same graph. The observations that have a malignant diagnosis have a higher mean for all 4 variables so we can use this to see the relationship between standard error and mean. Further analysis would then look into if measurements with high standard errors should be used to predict the diagnosis or not. This was a good start to answering the third research question as we can see some mean variables have a positive relationship with the standard error and high standard errors may not predict diagnosis well, so these measurements could be avoided. Further research would have to be done on the prediction of diagnosis.\
+  
+  The fourth question looked at the relationship between two variables, area and smoothness. If these variables are highly correlated, one might not need to do measure both. Creating a categorical variable allows us to create the jitter plot and look for a relationship between the two variables. So far there doesn't seem to be an obvious relationship but further analysis can be done to see if they are both needed in a model to predict diagnosis. This question could also be refined to look at relationships between other variables. 
 <!----------------------------------------------------------------------------->
 
 ### Attribution
